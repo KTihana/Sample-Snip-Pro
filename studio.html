@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Sample Snip Pro</title>
+    <link rel="stylesheet" href="studio.css" />
+    <script type="module" src="studio.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <span class="brand"
+          ><span class="brand-mark" aria-hidden="true"
+            ><img src="icons/logo.svg" alt="" width="28" height="28" /></span
+          ><span>Sample Snip <b>PRO</b></span></span
+        >
+        <button
+          id="theme"
+          class="icon-button"
+          aria-label="Switch to light theme"
+          title="Switch theme"
+        >
+          ☼
+        </button>
+      </header>
+      <main>
+        <section class="browser-recorder" aria-label="Record browser sound">
+          <button id="capture" class="primary-button">
+            <span class="record-dot"></span><span id="capture-label">Record sound</span
+            ><span id="capture-time" class="capture-clock" hidden>0:00</span>
+          </button>
+          <p id="source-hint" class="source-hint">Play audio in your tab, then press Record.</p>
+        </section>
+        <section class="instrument" aria-label="Sample pads">
+          <div class="instrument-toolbar">
+            <span id="loaded-count">0 / 16 sounds</span
+            ><button id="stop-all" class="text-button" title="Stop every playing pad (Escape)">
+              Stop all
+            </button>
+          </div>
+          <div id="pads" class="pad-grid" aria-label="16 sample pads"></div>
+        </section>
+        <details id="editor" class="editor" aria-label="Selected sample editor">
+          <summary class="selected-strip">
+            <span class="selected-label"
+              ><span id="pad-number">01</span><strong id="selected-name">Pad 01</strong
+              ><kbd id="selected-key">Q</kbd></span
+            ><span class="edit-label">Edit <span aria-hidden="true">⌄</span></span>
+          </summary>
+          <div class="editor-body">
+            <label class="field-label" for="sample-name">Sound name</label
+            ><input
+              id="sample-name"
+              class="name-input"
+              maxlength="40"
+              value="Pad 01"
+              autocomplete="off"
+            />
+            <div class="setting-row">
+              <label class="field-label" for="sample-key">Play with key</label
+              ><input
+                id="sample-key"
+                class="key-input"
+                value="Q"
+                readonly
+                aria-label="Keyboard trigger. Focus and press a letter or number."
+              />
+            </div>
+            <p class="field-help">Click the key, then press a letter or number.</p>
+            <div class="setting-row">
+              <label class="field-label" for="loop">Loop sound</label
+              ><input id="loop" class="switch" type="checkbox" role="switch" disabled />
+            </div>
+            <details id="sound-options" class="more-options">
+              <summary>Trim, volume &amp; color</summary>
+              <div class="waveform-wrap">
+                <div id="trim-track" class="trim-track">
+                  <canvas id="editor-wave" aria-label="Selected sample waveform"></canvas>
+                  <div id="trim-selection" class="trim-selection" aria-hidden="true" hidden></div>
+                  <button
+                    id="trim-start-handle"
+                    class="trim-handle"
+                    type="button"
+                    role="slider"
+                    aria-label="Trim start"
+                    aria-orientation="horizontal"
+                    disabled
+                    hidden
+                  >
+                    <span aria-hidden="true">‹</span></button
+                  ><button
+                    id="trim-end-handle"
+                    class="trim-handle"
+                    type="button"
+                    role="slider"
+                    aria-label="Trim end"
+                    aria-orientation="horizontal"
+                    disabled
+                    hidden
+                  >
+                    <span aria-hidden="true">›</span></button
+                  ><span id="empty-wave">No sound yet</span>
+                </div>
+                <button
+                  id="preview"
+                  class="preview-button"
+                  aria-label="Preview selected sound"
+                  disabled
+                >
+                  ▶</button
+                ><span id="sample-duration">Empty pad</span>
+              </div>
+              <p class="field-help trim-help">
+                Drag the handles to trim. Drag the middle to move your selection.
+              </p>
+              <div class="trim-controls">
+                <label
+                  >Start
+                  <input
+                    id="trim-start"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value="0"
+                    disabled
+                  /><span>seconds</span></label
+                ><label
+                  >End
+                  <input
+                    id="trim-end"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value="0"
+                    disabled
+                  /><span>seconds</span></label
+                >
+              </div>
+              <div class="volume-field">
+                <label class="field-label" for="pad-volume">Volume</label
+                ><output id="pad-volume-value">100%</output
+                ><input
+                  id="pad-volume"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value="1"
+                  disabled
+                />
+              </div>
+              <div class="color-field">
+                <span class="field-label">Color</span>
+                <div id="colors" class="color-options" aria-label="Pad color"></div>
+              </div>
+            </details>
+            <div class="sample-actions">
+              <button id="import" class="quiet-button">↑ Import</button
+              ><button id="export-sample" class="quiet-button" disabled>↓ Save sound</button
+              ><button id="clear" class="text-button" disabled>Clear</button>
+            </div>
+            <input id="file" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg,.flac,.webm" hidden />
+          </div>
+        </details>
+        <section class="session-panel" aria-label="Session recorder">
+          <button id="record-session" class="session-button">
+            <span class="record-dot"></span><span id="session-button-label">Record session</span>
+          </button>
+          <div class="session-clock">
+            <span id="session-time">0:00</span><span class="session-limit"> / 5:00</span>
+          </div>
+          <a
+            id="quick-download"
+            class="quick-download"
+            aria-label="Download session as WAV"
+            title="Download your latest session"
+            hidden
+            ><svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M10 2v10m-4-4 4 4 4-4M3 13v4h14v-4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+          ></a>
+          <p id="session-hint">Record the music you play on the pads.</p>
+        </section>
+        <details id="session-result" class="session-result" hidden>
+          <summary>Your last recording <span>Download ⌄</span></summary>
+          <div class="session-result-body">
+            <label class="field-label" for="session-name">Your recording</label
+            ><input
+              id="session-name"
+              maxlength="80"
+              value="My sample session"
+              aria-label="Session name"
+            /><audio id="session-audio" controls preload="metadata"></audio
+            ><a id="session-download" class="primary-button" download>↓ Download recording</a>
+          </div>
+        </details>
+        <details id="settings" class="settings" open>
+          <summary>Options</summary>
+          <div class="settings-body">
+            <div class="setting-row">
+              <label class="field-label" for="bank">Sample bank</label
+              ><span class="select-field"
+                ><select id="bank" aria-label="Sample bank"></select
+              ></span>
+            </div>
+            <div class="setting-row">
+              <label class="field-label" for="bank-name">Bank name</label
+              ><input id="bank-name" maxlength="40" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="setting-row">
+              <label class="field-label" for="mode">Playback</label
+              ><span class="select-field"
+                ><select id="mode">
+                  <option value="layer">Layer sounds</option>
+                  <option value="cut">Cut previous</option>
+                </select></span
+              >
+            </div>
+            <div class="volume-field">
+              <label class="field-label" for="master">Master volume</label
+              ><output id="master-value">80%</output
+              ><input id="master" type="range" min="0" max="1" step="0.01" value="0.8" />
+            </div>
+            <button id="demo" class="demo-button">Try demo sounds</button>
+            <p class="field-help demo-help">Replaces all 16 sounds in this bank.</p>
+          </div>
+        </details>
+        <footer id="environment">Saved on this device</footer>
+      </main>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    </div>
+  </body>
+</html>

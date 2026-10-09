@@ -1,0 +1,18 @@
+{
+  "name": "sample-snip-pro",
+  "version": "0.3.12",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "preview": "python3 -m http.server 4174 --bind 127.0.0.1",
+    "package": "python3 scripts/package.py",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "icons": "node scripts/render-icons.cjs"
+  },
+  "devDependencies": {
+    "prettier": "3.9.9",
+    "sharp": "0.35.5"
+  }
+}

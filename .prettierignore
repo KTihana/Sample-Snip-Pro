@@ -1,0 +1,5 @@
+node_modules/
+release/
+design/
+docs/screenshots/
+package-lock.json

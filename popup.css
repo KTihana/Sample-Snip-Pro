@@ -1,0 +1,19 @@
+body {
+  width: 340px;
+}
+#open-pads {
+  width: 100%;
+}
+#popup-error {
+  color: var(--rose);
+  font-size: 11px;
+  line-height: 1.5;
+}
+#popup-hint {
+  margin: 8px 0 3px;
+}
+footer {
+  margin: 0;
+  padding-bottom: 3px;
+  line-height: 1.5;
+}
