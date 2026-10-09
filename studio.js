@@ -17,6 +17,7 @@ import { drawWaveform } from './waveform.js';
 const $ = (id) => document.getElementById(id);
 const engine = new PadEngine();
 const extension = !!globalThis.chrome?.runtime?.id;
+const pressedKeys = new Map();
 let bank = 0,
   selected = 0,
   pads = [],
@@ -170,12 +171,17 @@ function renderPads() {
 }
 function updatePadStates(playing) {
   const active = playing || new Set([...engine.voices].filter((v) => !v.stopped).map((v) => v.id));
+  const pressed = new Set(pressedKeys.values());
   document.querySelectorAll('.pad-cell').forEach((cell) => {
     const pad = pads[Number(cell.dataset.index)];
-    cell.classList.toggle('selected', pad.index === selected);
+    cell.classList.toggle('pressed', pressed.has(pad.id));
     cell.classList.toggle('playing', active.has(pad.id));
     cell.classList.toggle('capturing', captureBusy() && captureState.padId === pad.id);
   });
+}
+function clearPressedKeys() {
+  pressedKeys.clear();
+  updatePadStates();
 }
 function selectPad(index) {
   if (switching || importing) return;
@@ -265,6 +271,7 @@ function updateCaptureControls() {
 async function loadBank(next) {
   if (switching || importing || !validBank(next)) return;
   switching = true;
+  clearPressedKeys();
   updateCaptureControls();
   try {
     engine.stopAll();
@@ -658,8 +665,16 @@ document.addEventListener('keydown', (event) => {
   const index = pads.findIndex((pad) => pad.key === event.key.toLowerCase());
   if (index < 0 || !pads[index].data) return;
   event.preventDefault();
+  pressedKeys.set(event.code || event.key.toLowerCase(), pads[index].id);
   engine.trigger(pads[index].id);
   selectPad(index);
+});
+document.addEventListener('keyup', (event) => {
+  if (pressedKeys.delete(event.code || event.key.toLowerCase())) updatePadStates();
+});
+window.addEventListener('blur', clearPressedKeys);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) clearPressedKeys();
 });
 window.addEventListener('resize', redraw);
 $('editor').addEventListener('toggle', redraw);

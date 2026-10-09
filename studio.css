@@ -210,13 +210,12 @@ button:not(:disabled):hover {
 .pad-hit.empty {
   background: color-mix(in srgb, var(--surface) 50%, var(--bg));
 }
-.pad-cell.selected .pad-hit {
+.pad-cell.pressed .pad-hit {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
 }
 .pad-cell.playing .pad-hit {
   background: color-mix(in srgb, var(--pad-color) 25%, var(--surface));
-  border-color: var(--pad-color);
 }
 .pad-hit:active {
   transform: translateY(1px);
