@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sample Snip audio test</title>
+    <style>
+      body {
+        font: 18px system-ui;
+        max-width: 640px;
+        margin: 80px auto;
+        background: #14141b;
+        color: #eee;
+      }
+      button {
+        padding: 16px;
+        font: inherit;
+      }
+      p {
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sample Snip audio test</h1>
+    <p>
+      This page generates a quiet stereo tone locally. Use it to check recording and WAV export.
+    </p>
+    <button id="play">Play test tone</button><button id="stop" disabled>Stop tone</button>
+    <p id="state" role="status">Tone stopped</p>
+    <script>
+      let context;
+      document.getElementById('play').onclick = async () => {
+        if (context) return;
+        context = new AudioContext();
+        const merger = context.createChannelMerger(2);
+        const gain = context.createGain();
+        gain.gain.value = 0.06;
+        [440, 660].forEach((frequency, channel) => {
+          const oscillator = context.createOscillator();
+          oscillator.frequency.value = frequency;
+          oscillator.connect(merger, 0, channel);
+          oscillator.start();
+        });
+        merger.connect(gain);
+        gain.connect(context.destination);
+        await context.resume();
+        document.getElementById('state').textContent = 'Playing: 440 Hz left / 660 Hz right';
+        document.getElementById('play').disabled = true;
+        document.getElementById('stop').disabled = false;
+      };
+      document.getElementById('stop').onclick = async () => {
+        if (context) await context.close();
+        context = undefined;
+        document.getElementById('state').textContent = 'Tone stopped';
+        document.getElementById('play').disabled = false;
+        document.getElementById('stop').disabled = true;
+      };
+    </script>
+  </body>
+</html>
